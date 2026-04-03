@@ -11,33 +11,39 @@ import { fromLonLat, toLonLat } from 'ol/proj'
 import { Style, Circle as CircleStyle, Fill, Stroke } from 'ol/style'
 import 'ol/ol.css'
 
-export default function MapView({ marker, onMapClick }) {
+function getSourceOfVectorLayerByName(mapObject, layerName) {
+  if (!mapObject) return null
+  const layer = mapObject.getAllLayers().find(
+    l => l.get('name') === layerName
+  )
+  if (!layer) return null
+  return layer.getSource()
+}
+
+export default function MapView({ markers, onMapClick }) {
   const mapElement = useRef(null)
   const mapRef = useRef(null)
-  const markerSourceRef = useRef(null)
 
   useEffect(() => {
     if (!mapElement.current) return
 
     const markerSource = new VectorSource()
-    markerSourceRef.current = markerSource
-
     const markerLayer = new VectorLayer({
-      source: markerSource
+      source: markerSource,
+      // даём имя слою
+      properties: { name: 'markers-layer' },
     })
 
     const map = new Map({
       target: mapElement.current,
       layers: [
-        new TileLayer({
-          source: new OSM()
-        }),
-        markerLayer
+        new TileLayer({ source: new OSM() }),
+        markerLayer,
       ],
       view: new View({
         center: fromLonLat([50.1503, 53.1959]),
-        zoom: 8
-      })
+        zoom: 9,
+      }),
     })
 
     map.on('click', event => {
@@ -57,31 +63,44 @@ export default function MapView({ marker, onMapClick }) {
   }, [onMapClick])
 
   useEffect(() => {
-    if (!marker || !markerSourceRef.current || !mapRef.current) return
+    const map = mapRef.current
+    if (!map) return
 
-    markerSourceRef.current.clear()
-
-    const feature = new Feature({
-      geometry: new Point(fromLonLat([marker.lng, marker.lat]))
-    })
-
-    feature.setStyle(
-      new Style({
-        image: new CircleStyle({
-          radius: 8,
-          fill: new Fill({ color: '#ef4444' }),
-          stroke: new Stroke({ color: '#ffffff', width: 2 })
-        })
-      })
+    const markerSource = getSourceOfVectorLayerByName(
+      map,
+      'markers-layer'
     )
+    if (!markerSource) return
 
-    markerSourceRef.current.addFeature(feature)
-    mapRef.current.getView().animate({
-      center: fromLonLat([marker.lng, marker.lat]),
-      zoom: 11,
-      duration: 400
+    markerSource.clear()
+
+    if (!markers || !markers.length) return
+
+    markers.forEach(m => {
+      const feature = new Feature({
+        geometry: new Point(
+          fromLonLat([Number(m.lng), Number(m.lat)])
+        ),
+      })
+      feature.setStyle(
+        new Style({
+          image: new CircleStyle({
+            radius: 8,
+            fill: new Fill({ color: '#ef4444' }),
+            stroke: new Stroke({ color: '#ffffff', width: 2 }),
+          }),
+        })
+      )
+      markerSource.addFeature(feature)
     })
-  }, [marker])
+
+    const first = markers[0]
+    map.getView().animate({
+      center: fromLonLat([Number(first.lng), Number(first.lat)]),
+      zoom: 11,
+      duration: 400,
+    })
+  }, [markers])
 
   return <div ref={mapElement} className="map" />
 }

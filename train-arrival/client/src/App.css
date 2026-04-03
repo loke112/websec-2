@@ -40,31 +40,30 @@ button {
 
 .layout {
   display: grid;
-  grid-template-columns: 340px 1fr 420px;
+  grid-template-columns: 340px 640px 420px; 
   gap: 16px;
-  padding: 16px;
+  padding: 16px 32px;
+  align-items: stretch;
+  justify-content: center;
 }
 
 .panel {
   background: #ffffff;
   border-radius: 14px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
-}
-
-.controls,
-.results {
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
 }
 
 .map-panel {
+  padding: 0;
   overflow: hidden;
-  min-height: 720px;
 }
 
 .map {
   width: 100%;
-  height: 720px;
-  min-height: 720px;
+  height: 800px;
+  min-height: 800px;
 }
 
 .block + .block {
@@ -116,7 +115,7 @@ input {
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   border-radius: 10px;
-  padding: 12px;
+  padding: 8px 10px;
   text-align: left;
 }
 
@@ -209,23 +208,103 @@ input {
   color: #991b1b;
 }
 
-@media (max-width: 1100px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
-
-  .map-panel,
-  .map {
-    min-height: 420px;
-  }
+.results {
+  padding: 16px;
 }
 
-@media (max-width: 640px) {
-  .header h1 {
-    font-size: 22px;
-  }
+.schedule-scroll {
+  margin-top: 12px;
+  padding-right: 4px;
+  max-height: 600px; /* чуть меньше высоты карты */
+  overflow-y: auto;
+}
 
+.controls {
+  padding: 16px;
+}
+
+.search-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.list-nearby {
+  max-height: 180px;
+}
+
+.empty.small {
+  font-size: 13px;
+  padding: 8px;
+}
+
+.mode-toggle {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+}
+
+.mode-button {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.mode-button.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}
+
+.route-form {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.route-field {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.route-label {
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.route-value {
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.route-select {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 13px;
+  background: #e5e7eb;
+}
+
+.route-select:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+
+
+@media (max-width: 960px) {
   .layout {
+    grid-template-columns: 1fr;
     padding: 12px;
     gap: 12px;
   }
@@ -235,12 +314,40 @@ input {
     padding: 12px;
   }
 
+  .map,
+  .map-panel {
+    height: 420px;
+    min-height: 420px;
+  }
+
+  .schedule-scroll {
+    max-height: 380px;
+  }
+
+  .mode-toggle {
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .header p {
+    font-size: 14px;
+  }
+
+  .map {
+    height: 380px;
+    min-height: 380px;
+  }
+
   input,
   .full-button,
   .list-item {
     min-height: 44px;
   }
-
 }
 
 .map .ol-viewport {
@@ -264,4 +371,74 @@ input {
 .result-section h3 {
   margin: 0 0 12px;
   font-size: 18px;
+}
+
+@media (max-width: 720px) {
+  .controls {
+    padding: 8px 10px;
+  }
+
+  .block {
+    margin-bottom: 10px;
+  }
+
+  .block + .block {
+    margin-top: 10px;
+  }
+
+  .search-list {
+    max-height: 120px;
+  }
+
+  .list-nearby {
+    max-height: 160px;
+  }
+
+  .panel.controls {
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  .map,
+  .map-panel {
+    height: 360px;
+    min-height: 360px;
+  }
+
+  .schedule-scroll {
+    max-height: none;
+  }
+
+  .header h1 {
+    font-size: 20px;
+  }
+
+  .header p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 720px) {
+  .list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .list-title {
+    display: inline-block;
+    margin-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .list-subtitle {
+    display: inline-block;
+    margin-top: 0;
+    font-size: 12px;
+    white-space: nowrap;
+  }
 }
