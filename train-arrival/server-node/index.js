@@ -7,14 +7,14 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const BASE_URL = 'https://api.rasp.yandex-net.ru/v3.0'
+const BASE_URL = process.env.BASE_URL || "https://api.rasp.yandex-net.ru/v3.0";
 const API_KEY = process.env.YANDEX_RASP_API_KEY || process.env.YANDEX_API_KEY
 
 async function yandexRequest(path, params = {}) {
   const url = new URL(BASE_URL + path)
 
   Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined && value !== null && value !== '') {
+    if (Boolean(value)) {
       url.searchParams.set(key, String(value))
     }
   })

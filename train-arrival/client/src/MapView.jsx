@@ -10,15 +10,7 @@ import Point from "ol/geom/Point";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Style, Circle as CircleStyle, Fill, Stroke } from "ol/style";
 import "ol/ol.css";
-
-function getSourceOfVectorLayerByName(mapObject, layerName) {
-  if (!mapObject) return null;
-  const layer = mapObject
-    .getAllLayers()
-    .find((l) => l.get("name") === layerName);
-  if (!layer) return null;
-  return layer.getSource();
-}
+import { getSourceOfVectorLayerByName } from "./utils/layerInstruments";
 
 export default function MapView({ markers, onMapClick }) {
   const mapElement = useRef(null);
@@ -30,7 +22,6 @@ export default function MapView({ markers, onMapClick }) {
     const markerSource = new VectorSource();
     const markerLayer = new VectorLayer({
       source: markerSource,
-      // даём имя слою
       properties: { name: "markers-layer" },
     });
 
@@ -50,11 +41,12 @@ export default function MapView({ markers, onMapClick }) {
 
     mapRef.current = map;
 
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       map.updateSize();
     }, 100);
 
     return () => {
+      clearTimeout(timeout);
       map.setTarget(undefined);
     };
   }, [onMapClick]);
@@ -74,6 +66,7 @@ export default function MapView({ markers, onMapClick }) {
       const feature = new Feature({
         geometry: new Point(fromLonLat([Number(m.lng), Number(m.lat)])),
       });
+
       feature.setStyle(
         new Style({
           image: new CircleStyle({
@@ -81,8 +74,9 @@ export default function MapView({ markers, onMapClick }) {
             fill: new Fill({ color: "#ef4444" }),
             stroke: new Stroke({ color: "#ffffff", width: 2 }),
           }),
-        }),
+        })
       );
+
       markerSource.addFeature(feature);
     });
 
