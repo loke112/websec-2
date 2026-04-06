@@ -445,3 +445,18 @@ input {
     white-space: nowrap;
   }
 }
+
+.page,
+.page * {
+  color: #111827;
+}
+
+.header,
+.header * {
+  color: inherit;
+}
+
+.header h1,
+.header p {
+  color: #ffffff;
+}
