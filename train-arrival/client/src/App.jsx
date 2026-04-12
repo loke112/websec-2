@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import "./App.css";
-import MapView from "./MapView";
+import MapView from './components/MapView/MapView'
 import {
   getNearbyStations,
   getStationSchedule,
@@ -59,20 +59,17 @@ function App() {
       setSchedule(null);
     }
 
-    if (station.latitude != null && station.longitude != null) {
-      setMarker({ lat: station.latitude, lng: station.longitude });
-    } else if (station.lat != null && station.lng != null) {
-      setMarker({ lat: station.lat, lng: station.lng });
-    }
+    const lat = station.latitude ?? station.lat ?? null
+const lng = station.longitude ?? station.lng ?? null
+
+if (lat != null && lng != null) {
+  setMarker({ lat, lng })
+}
   }
 
-  function handleSelectFromSearch(station) {
-    selectStationForMode(station);
-  }
-
-  function handleSelectNearby(station) {
-    selectStationForMode(station);
-  }
+  function handleSelectStation(station) {
+  selectStationForMode(station)
+}
 
   const handleMapClick = useCallback(
     async ({ lat, lng }) => {
@@ -153,7 +150,7 @@ function App() {
       <button
         key={`search-${st.code}`}
         className={`list-item ${selectedStation?.code === st.code ? "active" : ""}`}
-        onClick={() => handleSelectFromSearch(st)}
+        onClick={() => handleSelectStation(st)}
       >
         <span className="list-title">{st.title}</span>
         <span className="list-subtitle">
@@ -176,7 +173,7 @@ function App() {
       <button
         key={st.code}
         className={`list-item ${selectedStation?.code === st.code ? "active" : ""}`}
-        onClick={() => handleSelectNearby(st)}
+        onClick={() => handleSelectStation(st)}
       >
         <span className="list-title">{st.title}</span>
         <span className="list-subtitle">

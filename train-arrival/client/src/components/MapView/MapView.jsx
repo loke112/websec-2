@@ -10,7 +10,7 @@ import Point from "ol/geom/Point";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Style, Circle as CircleStyle, Fill, Stroke } from "ol/style";
 import "ol/ol.css";
-import { getSourceOfVectorLayerByName } from "./utils/layerInstruments";
+import { getSourceOfVectorLayerByName } from "../../utils/layerInstruments";
 
 export default function MapView({ markers, onMapClick }) {
   const mapElement = useRef(null);
